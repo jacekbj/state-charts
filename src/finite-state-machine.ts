@@ -25,7 +25,7 @@ export class FSM {
   public initialTransition: Transition;
 
   constructor(
-    private eventEmitter: EventEmitter,
+    public eventEmitter: EventEmitter,
     private states: State[],
     private initialState: State,
   ) {

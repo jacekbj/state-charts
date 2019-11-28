@@ -9,18 +9,25 @@
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^24.0.18",
+    "eventemitter3": "^4.0.0",
+    "http-server": "^0.12.0",
     "husky": "^3.0.5",
     "jest": "^24.9.0",
     "prettier": "1.18.2",
     "pretty-quick": "^1.11.1",
+    "rollup": "^1.27.5",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "ts-jest": "^24.1.0",
     "typescript": "^3.6.3"
   },
   "scripts": {
     "prepare": "yarn build",
     "build": "rm -rf lib && tsc",
+    "build:example": "rollup -c public/rollup.config.js",
     "test": "jest",
-    "test:coverage": "jest --collect-coverage=true"
+    "test:coverage": "jest --collect-coverage=true",
+    "serve": "http-server ./public"
   },
   "files": [
     "lib"
@@ -30,5 +37,6 @@
       "pre-commit": "yarn test",
       "pre-push": "yarn test:coverage"
     }
-  }
+  },
+  "dependencies": {}
 }

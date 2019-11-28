@@ -1,4 +1,4 @@
-import { EventEmitter, FSM, State, Transition } from './finite-state-machine';
+import { EventEmitter, FSM, State } from './finite-state-machine';
 
 function getInitialState(): State {
   return {
