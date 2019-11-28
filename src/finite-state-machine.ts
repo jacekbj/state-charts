@@ -1,5 +1,6 @@
 export interface Transition {
   action: string;
+  from?: string;
   to: string;
   condition?: () => boolean;
 }
@@ -18,26 +19,40 @@ export class FSM {
   static readonly events = {
     enter: 'entering',
     leave: 'leaving',
+    transition: 'transitioning',
   };
   private currentState: State | undefined;
+  public initialTransition: Transition;
 
   constructor(
     private eventEmitter: EventEmitter,
     private states: State[],
     private initialState: State,
-  ) {}
+  ) {
+      this.initialTransition = {
+          action: 'initial',
+          to: this.initialState.name,
+      };
+  }
 
   init(): FSM {
-    this.setState(this.initialState);
+    this.setState(this.initialState, this.initialTransition);
     return this;
   }
 
-  private setState(value: State | undefined): void {
+  private setState(value: State | undefined, transition: Transition): void {
     if (this.currentState) {
-      this.eventEmitter.emit('leaving', this.currentState);
+      this.eventEmitter.emit(FSM.events.leave, this.currentState);
     }
+    this.eventEmitter.emit(
+        FSM.events.transition,
+        {
+            ...transition,
+            from: this.currentState?.name,
+        },
+    );
     this.currentState = value;
-    this.eventEmitter.emit('entering', this.currentState);
+    this.eventEmitter.emit(FSM.events.enter, this.currentState);
   }
 
   dispatch(action: string): void {
@@ -58,7 +73,7 @@ export class FSM {
       );
 
       if (targetState) {
-        this.setState(targetState);
+        this.setState(targetState, transition);
       }
     }
   }

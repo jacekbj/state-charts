@@ -1,4 +1,4 @@
-import { EventEmitter, FSM, State } from './finite-state-machine';
+import { EventEmitter, FSM, State, Transition } from './finite-state-machine';
 
 function getInitialState(): State {
   return {
@@ -63,16 +63,18 @@ describe('Finite State FSM', () => {
       expect(machine.state).toBeUndefined();
     });
 
-    it('should dispatch event when initialized', () => {
+    it('should dispatch events when initialized', () => {
       const initialState = states.find(state => state.name === 'A');
       const machine = new FSM(eventEmitter, states, getInitialState());
 
       machine.init();
 
       const calls = (eventEmitter.emit as jest.Mock).mock.calls;
-      expect(calls.length).toEqual(1);
-      expect(calls[0][0]).toEqual(FSM.events.enter);
-      expect(calls[0][1]).toEqual(initialState);
+      expect(calls.length).toEqual(2);
+      expect(calls[0][0]).toEqual(FSM.events.transition);
+      expect(calls[0][1]).toEqual(machine.initialTransition);
+      expect(calls[1][0]).toEqual(FSM.events.enter);
+      expect(calls[1][1]).toEqual(initialState);
     });
 
     it('should set state when initialized', () => {
@@ -114,16 +116,26 @@ describe('Finite State FSM', () => {
 
       const calls = (eventEmitter.emit as jest.Mock).mock.calls;
 
-      expect(calls.length).toEqual(3);
+      expect(calls.length).toEqual(5);
 
-      expect(calls[0][0]).toEqual(FSM.events.enter);
-      expect(calls[0][1]).toEqual(initialState);
+      expect(calls[0][0]).toEqual(FSM.events.transition);
+      expect(calls[0][1]).toEqual(machine.initialTransition);
 
-      expect(calls[1][0]).toEqual(FSM.events.leave);
+      expect(calls[1][0]).toEqual(FSM.events.enter);
       expect(calls[1][1]).toEqual(initialState);
 
-      expect(calls[2][0]).toEqual(FSM.events.enter);
-      expect(calls[2][1]).toEqual(states.find(state => state.name === 'B'));
+      expect(calls[2][0]).toEqual(FSM.events.leave);
+      expect(calls[2][1]).toEqual(initialState);
+
+      expect(calls[3][0]).toEqual(FSM.events.transition);
+      expect(calls[3][1]).toEqual({
+        from: initialState.name,
+        action: 'to B',
+        to: 'B',
+      });
+
+      expect(calls[4][0]).toEqual(FSM.events.enter);
+      expect(calls[4][1]).toEqual(states.find(state => state.name === 'B'));
 
       expect(machine.state).toHaveProperty('name', 'B');
     });
@@ -139,16 +151,26 @@ describe('Finite State FSM', () => {
 
       const calls = (eventEmitter.emit as jest.Mock).mock.calls;
 
-      expect(calls.length).toEqual(3);
+      expect(calls.length).toEqual(5);
 
-      expect(calls[0][0]).toEqual(FSM.events.enter);
-      expect(calls[0][1]).toEqual(initialState);
+      expect(calls[0][0]).toEqual(FSM.events.transition);
+      expect(calls[0][1]).toEqual(machine.initialTransition);
 
-      expect(calls[1][0]).toEqual(FSM.events.leave);
+      expect(calls[1][0]).toEqual(FSM.events.enter);
       expect(calls[1][1]).toEqual(initialState);
 
-      expect(calls[2][0]).toEqual(FSM.events.enter);
+      expect(calls[2][0]).toEqual(FSM.events.leave);
       expect(calls[2][1]).toEqual(initialState);
+
+      expect(calls[3][0]).toEqual(FSM.events.transition);
+      expect(calls[3][1]).toEqual({
+        from: initialState.name,
+        to: initialState.name,
+        action: 'to A',
+      });
+
+      expect(calls[4][0]).toEqual(FSM.events.enter);
+      expect(calls[4][1]).toEqual(initialState);
 
       expect(machine.state).toHaveProperty('name', 'A');
     });
@@ -177,7 +199,7 @@ describe('Finite State FSM', () => {
         };
         const machine = new FSM(
           eventEmitter,
-          [initialState, { name: 'B', transitions: [] }],
+          [initialState, {name: 'B', transitions: []}],
           initialState,
         );
 
@@ -200,7 +222,7 @@ describe('Finite State FSM', () => {
         };
         const machine = new FSM(
           eventEmitter,
-          [initialState, { name: 'B', transitions: [] }],
+          [initialState, {name: 'B', transitions: []}],
           initialState,
         );
 
@@ -224,7 +246,7 @@ describe('Finite State FSM', () => {
         };
         const machine = new FSM(
           eventEmitter,
-          [initialState, { name: 'B', transitions: [] }],
+          [initialState, {name: 'B', transitions: []}],
           initialState,
         );
 
