@@ -18,18 +18,18 @@ export class ReduxExtensionConnector {
 
     fsm.eventEmitter.on(FSM.events.leave, (state: State) => {
       if (typeof this.extension !== 'undefined') {
-        this.extension.send(`${prefix}${FSM.events.leave}`, state.name);
+        this.extension.send(`${prefix}${FSM.events.leave} ${state.name}`, state.name);
       }
     });
     fsm.eventEmitter.on(FSM.events.enter, (state: State) => {
       if (typeof this.extension !== 'undefined') {
-        this.extension.send(`${prefix}${FSM.events.enter}`, state.name);
+        this.extension.send(`${prefix}${FSM.events.enter} ${state.name}`, state.name);
       }
     });
     fsm.eventEmitter.on(FSM.events.transition, (transition: Transition) => {
       if (typeof this.extension !== 'undefined') {
         this.extension.send(
-          `${prefix}${FSM.events.transition}`,
+          `${prefix}${FSM.events.transition} from ${transition.from} to ${transition.to}`,
           `${transition.from}`,
         );
       }
