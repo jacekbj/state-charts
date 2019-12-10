@@ -1,6 +1,6 @@
 {
   "name": "state-charts",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "State charts implementation.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
