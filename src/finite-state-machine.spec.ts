@@ -70,11 +70,9 @@ describe('Finite State FSM', () => {
       machine.init();
 
       const calls = (eventEmitter.emit as jest.Mock).mock.calls;
-      expect(calls.length).toEqual(2);
-      expect(calls[0][0]).toEqual(FSM.events.transition);
-      expect(calls[0][1]).toEqual(machine.initialTransition);
-      expect(calls[1][0]).toEqual(FSM.events.enter);
-      expect(calls[1][1]).toEqual(initialState);
+      expect(calls.length).toEqual(1);
+      expect(calls[0][0]).toEqual(FSM.events.enter);
+      expect(calls[0][1]).toEqual(initialState);
     });
 
     it('should set state when initialized', () => {
@@ -116,26 +114,16 @@ describe('Finite State FSM', () => {
 
       const calls = (eventEmitter.emit as jest.Mock).mock.calls;
 
-      expect(calls.length).toEqual(5);
+      expect(calls.length).toEqual(3);
 
-      expect(calls[0][0]).toEqual(FSM.events.transition);
-      expect(calls[0][1]).toEqual(machine.initialTransition);
+      expect(calls[0][0]).toEqual(FSM.events.enter);
+      expect(calls[0][1]).toEqual(initialState);
 
-      expect(calls[1][0]).toEqual(FSM.events.enter);
+      expect(calls[1][0]).toEqual(FSM.events.leave);
       expect(calls[1][1]).toEqual(initialState);
 
-      expect(calls[2][0]).toEqual(FSM.events.leave);
-      expect(calls[2][1]).toEqual(initialState);
-
-      expect(calls[3][0]).toEqual(FSM.events.transition);
-      expect(calls[3][1]).toEqual({
-        from: initialState.name,
-        action: 'to B',
-        to: 'B',
-      });
-
-      expect(calls[4][0]).toEqual(FSM.events.enter);
-      expect(calls[4][1]).toEqual(states.find(state => state.name === 'B'));
+      expect(calls[2][0]).toEqual(FSM.events.enter);
+      expect(calls[2][1]).toEqual(states.find(state => state.name === 'B'));
 
       expect(machine.state).toHaveProperty('name', 'B');
     });
@@ -151,26 +139,16 @@ describe('Finite State FSM', () => {
 
       const calls = (eventEmitter.emit as jest.Mock).mock.calls;
 
-      expect(calls.length).toEqual(5);
+      expect(calls.length).toEqual(3);
 
-      expect(calls[0][0]).toEqual(FSM.events.transition);
-      expect(calls[0][1]).toEqual(machine.initialTransition);
+      expect(calls[0][0]).toEqual(FSM.events.enter);
+      expect(calls[0][1]).toEqual(initialState);
 
-      expect(calls[1][0]).toEqual(FSM.events.enter);
+      expect(calls[1][0]).toEqual(FSM.events.leave);
       expect(calls[1][1]).toEqual(initialState);
 
-      expect(calls[2][0]).toEqual(FSM.events.leave);
+      expect(calls[2][0]).toEqual(FSM.events.enter);
       expect(calls[2][1]).toEqual(initialState);
-
-      expect(calls[3][0]).toEqual(FSM.events.transition);
-      expect(calls[3][1]).toEqual({
-        from: initialState.name,
-        to: initialState.name,
-        action: 'to A',
-      });
-
-      expect(calls[4][0]).toEqual(FSM.events.enter);
-      expect(calls[4][1]).toEqual(initialState);
 
       expect(machine.state).toHaveProperty('name', 'A');
     });

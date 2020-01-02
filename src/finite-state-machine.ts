@@ -1,4 +1,4 @@
-export interface Transition {
+interface Transition {
   action: string;
   from?: string;
   to: string;
@@ -11,7 +11,7 @@ export interface State {
 }
 
 export interface EventEmitter {
-  emit: (name: string, payload: any) => void;
+  emit: (name: string, payload?: State) => void;
   on: (name: string, cb: (payload: any) => void) => void;
 }
 
@@ -19,7 +19,6 @@ export class FSM {
   static readonly events = {
     enter: 'entering',
     leave: 'leaving',
-    transition: 'transitioning',
   };
   private currentState: State | undefined;
   public initialTransition: Transition;
@@ -44,13 +43,6 @@ export class FSM {
     if (this.currentState) {
       this.eventEmitter.emit(FSM.events.leave, this.currentState);
     }
-    this.eventEmitter.emit(
-        FSM.events.transition,
-        {
-            ...transition,
-            from: this.currentState?.name,
-        },
-    );
     this.currentState = value;
     this.eventEmitter.emit(FSM.events.enter, this.currentState);
   }

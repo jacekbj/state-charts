@@ -1,4 +1,4 @@
-import { FSM, State, Transition } from './finite-state-machine';
+import { FSM, State } from './finite-state-machine';
 
 interface ReduxExtension {
   send: (action: string, payload: any) => void;
@@ -24,14 +24,6 @@ export class ReduxExtensionConnector {
     fsm.eventEmitter.on(FSM.events.enter, (state: State) => {
       if (typeof this.extension !== 'undefined') {
         this.extension.send(`${prefix}${FSM.events.enter} ${state.name}`, state.name);
-      }
-    });
-    fsm.eventEmitter.on(FSM.events.transition, (transition: Transition) => {
-      if (typeof this.extension !== 'undefined') {
-        this.extension.send(
-          `${prefix}${FSM.events.transition} from ${transition.from} to ${transition.to}`,
-          `${transition.from}`,
-        );
       }
     });
   }
