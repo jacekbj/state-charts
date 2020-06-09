@@ -2,6 +2,7 @@
   "name": "state-charts",
   "version": "2.0.0",
   "description": "State charts implementation.",
+  "homepage": "https://github.com/jacekbj/state-charts",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "repository": "git@github.com:jacekbj/state-charts.git",
